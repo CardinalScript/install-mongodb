@@ -25,6 +25,15 @@ wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubun
 sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 rm -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
+# adding the conf file to the etc
+touch /etc/mongod.conf
+
+# changing permissions of the conf file
+sudo chmod 777 /var/log/mongodb/mongod.log
+
+# setting the conf file as the standard
+mongod -f /etc/mongod.conf
+
 # starting connection/serving/service
 sudo service mongod start
 
