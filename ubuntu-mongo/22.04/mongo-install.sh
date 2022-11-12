@@ -37,4 +37,7 @@ mongod -f /etc/mongod.conf
 # starting connection/serving/service
 sudo service mongod start
 
+# start the server
+# sudo mongod --dbpath /var/lib/mongodb/
+
 echo 'BYE.'
