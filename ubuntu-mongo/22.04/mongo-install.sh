@@ -1,13 +1,14 @@
 # Author: Victor Kolis
 # Last updated: nov-11-2022
-# Purpose: Install MongoDB to Debian based computers (Bash) automatically
+# Purpose: Install MongoDB to Ubuntu computers (Bash) automatically
 
 #!/bin/bash
 
-# update system and allow insecure repositories
+# update system and allow insecure repositories and installing dependencies
 echo -e '[1] - Updating system\nAllowing insecure repositories'
 sudo apt update
 sudo apt-get update --allow-insecure-repositories
+sudo apt install libssl1.1
 
 
 # remove old versions/mongo instances
