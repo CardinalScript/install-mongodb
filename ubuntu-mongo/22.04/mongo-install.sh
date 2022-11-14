@@ -5,37 +5,43 @@
 #!/bin/bash
 
 # update system and allow insecure repositories
+echo -e '[1] - Updating system\nAllowing insecure repositories'
 sudo apt update
-apt-get update --allow-insecure-repositories
+sudo apt-get update --allow-insecure-repositories
+
 
 # remove old versions/mongo instances
+echo '[2] - Removing old mongo instances'
 sudo apt-get purge mongodb-org*
 sudo rm -r /var/log/mongodb
 sudo rm -r /var/lib/mongodb
+systemctl stop mongod.service
+systemctl disable mongod.service
+sudo apt remove --autoremove mongodb-org
+sudo rm /etc/apt/sources.list.d/mongodb*.list
+sudo apt update
 
-# adding server key
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+# installing gpg
+echo '[3] - Installnig GPG and adding mongo key'
+sudo apt install gpg
+curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb60.gpg
 
-# adding the repository link and architecture to the mongo list and updating system
-echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
-sudo apt-get update
-
-# installing the possible broken/not yet installed dependencies
-wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-rm -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
 # adding the conf file to the etc
+echo '[4] - Adding new repository for mongo 6.0, verifying (creating) the .conf file'
 touch /etc/mongod.conf
 
 # changing permissions of the conf file
+echo '[5] - Installing mongo-org and changing the permissions to the mongo.log file'
+sudo apt update
+sudo apt install mongodb-org
 sudo chmod 777 /var/log/mongodb/mongod.log
 
 # setting the conf file as the standard
+echo '[6] - Starting mongod.service and setting the .conf file for mongo'
+systemctl enable mongod.service
+systemctl start mongod.service
 mongod -f /etc/mongod.conf
-
-# starting connection/serving/service
-sudo service mongod start
 
 # start the server
 # sudo mongod --dbpath /var/lib/mongodb/
